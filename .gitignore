@@ -1,0 +1,7 @@
+.env
+.venv/
+__pycache__/
+node_modules/
+
+# Raw exports; only the web-ready copies in site/media are published
+incoming/
