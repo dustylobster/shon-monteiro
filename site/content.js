@@ -33,6 +33,23 @@ window.PORTFOLIO = {
     year: 2026,
   },
 
+  // Long-form feature, shown right after the showreel. teaser = short silent loop that plays in the section;
+  // clicking plays the full file with sound. Leave file empty to hide the section.
+  feature: {
+    file: "media/motion-graphics-and-yt-long-form.mp4",
+    teaser: "media/longform-teaser.mp4",
+    poster: "media/motion-graphics-and-yt-long-form.jpg",
+    kicker: "Long-form · Motion graphics",
+    title: "Bugatti Active Aero, Explained",
+    client: "Venuum",
+    role: "Motion graphics & edit",
+    format: "YouTube long-form",
+    length: "3:55",
+    year: 2026,
+    description:
+      "A YouTube explainer on how Bugatti's active aerodynamics work and what a fixed-wing kit changes, with interview footage cut against custom motion-graphics breakdowns.",
+  },
+
   // category: "client", "personal" (CGI projects) or "experiment".
   // client: shown under the title; "" hides it. aspect: "16/9" landscape, "9/16" vertical.
   // role (optional): what you did, shown in the player, e.g. "Edit, colour & sound design".

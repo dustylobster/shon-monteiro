@@ -195,6 +195,47 @@
     $$('a[href="#reel"]').forEach((a) => a.setAttribute("href", "#work"));
   }
 
+  // ---------- Long-form feature ----------
+  // A silent teaser loops while the section is on screen; clicking plays the full video with sound.
+  const feature = P.feature && P.feature.file ? P.feature : null;
+  const featureSection = $(".feature");
+  if (feature) {
+    $(".feature-kicker").textContent = feature.kicker || "Long-form";
+    $(".feature-title").textContent = feature.title;
+    $(".feature-desc").textContent = feature.description || "";
+    $(".feature-media").setAttribute("aria-label", `Play ${feature.title}${feature.length ? `, ${feature.length}` : ""}`);
+    const poster = $(".feature-poster");
+    if (feature.poster) poster.src = feature.poster;
+    else poster.remove();
+    $(".feature-length").textContent = feature.length || "";
+    $(".feature-meta").innerHTML = [
+      ["Client", feature.client],
+      ["Role", feature.role],
+      ["Format", feature.format],
+      ["Length", feature.length],
+    ]
+      .filter(([, v]) => v)
+      .map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`)
+      .join("");
+
+    const teaser = $(".feature-teaser");
+    if (feature.teaser && !reduceMotion) {
+      teaser.addEventListener("playing", () => $(".feature-media").classList.add("is-playing"));
+      new IntersectionObserver(([entry]) => {
+        if (entry.isIntersecting) {
+          if (!teaser.src) teaser.src = feature.teaser;
+          teaser.play().catch(() => {});
+        } else {
+          teaser.pause();
+        }
+      }, { threshold: 0.25 }).observe(teaser);
+    } else {
+      teaser.remove();
+    }
+  } else {
+    featureSection.remove();
+  }
+
   // ---------- Scroll-driven effects ----------
   const nav = $(".nav");
   let ticking = false;
@@ -288,6 +329,11 @@
     if (opener) opener.focus({ preventScroll: true });
     const r = reel.getBoundingClientRect();
     if (showreel && r.bottom > 0 && r.top < innerHeight) reelVideo.play().catch(() => {});
+    const teaser = $(".feature-teaser");
+    if (teaser && teaser.src) {
+      const t = teaser.getBoundingClientRect();
+      if (t.bottom > 0 && t.top < innerHeight) teaser.play().catch(() => {});
+    }
   }
 
   $(".groups").addEventListener("click", (e) => {
@@ -295,6 +341,12 @@
     if (media) open(order, +media.dataset.index);
   });
   $(".reel-play").addEventListener("click", () => open([{ client: P.name, ...showreel }], 0));
+  if (feature) {
+    $(".feature-media").addEventListener("click", () => {
+      $(".feature-teaser")?.pause();
+      open([feature], 0);
+    });
+  }
   $(".player-prev").addEventListener("click", () => show(current - 1));
   $(".player-next").addEventListener("click", () => show(current + 1));
   player.addEventListener("click", (e) => { if (e.target.closest("[data-close]")) close(); });
